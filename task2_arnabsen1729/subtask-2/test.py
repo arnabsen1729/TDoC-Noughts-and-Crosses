@@ -8,9 +8,10 @@ class Client:
             self.DISCON_MSG = DISCON_MSG
             self.ADDR = ADDR
             self.SOCK.connect(ADDR)
-            print(f'[NEW CONNECTION] Client {ADDR} added...')
+            print(f'[CONNECTION SUCCESS] Connected to server {ADDR} ...')
         except:
             print('[SOMETHING WENT WRONG]...')
+            sys.exit(0)
         
 
     def send_message(self, message, FORMAT='utf-8'):
@@ -26,12 +27,12 @@ class Client:
         return data
 
 HOST = socket.gethostname()
-PORT = 3033 # change this to the port client1 is running
+PORT = 3034 # change this to the port client1 is running
 ADDR = (HOST, PORT)
 
-client = Client(ADDR, 'Q')
+client = Client(ADDR, 'Quit')
 
 while client.SOCK:
-    data = input('Enter Message: ')
-    client.send_message(data)
+    # data = input('[ENTER MESSAGE]: '
+    client.send_message('Trying to DDOS...')
     client.recv_resp()

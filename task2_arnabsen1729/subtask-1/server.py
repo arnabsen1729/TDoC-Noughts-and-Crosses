@@ -9,6 +9,7 @@ class Server:
 
     def init(self):
         self.SOCK.bind(self.ADDR)
+        print(f'[SERVER STARTED] at {self.ADDR}...')
         self.SOCK.listen()
         return self.SOCK
 
@@ -19,15 +20,15 @@ class Server:
 
     def recv_message(self, conn, CHUNKS=1024, FORMAT='utf-8'):
         data = conn.recv(CHUNKS).decode(FORMAT)
-        print(f'[MESSAGE FROM {addr}] : {data}')
-        if data == self.DISCON_MSG:
+        print(f'[MESSAGE FROM {addr}] : \t{data}')
+        if data=='':
             print("[CONNECTION CLOSED]")
             self.SOCK.close()
             sys.exit(0)
         return data
         
-    def send_resp(self, conn, RESPONSE='PONG', FORMAT='utf-8'):
-        print(f'[RESPONSE GIVEN {self.ADDR}] : {RESPONSE}')
+    def send_resp(self, conn, RESPONSE, FORMAT='utf-8'):
+        print(f'[RESPONSE GIVEN by {self.ADDR}] : \t{RESPONSE}')
         conn.send(bytes(RESPONSE, FORMAT))
 
 
@@ -35,15 +36,12 @@ HOST = socket.gethostname()
 PORT = 3033 # change this to any other available port
 ADDR = (HOST, PORT)
 
-client = Server(ADDR, 'Q')
-client_sock = client.init()
+server = Server(ADDR, '\x00')
+server_sock = server.init()
 
-while client_sock:
-    conn, addr = client.accept_client()
+while server_sock:
+    conn, addr = server.accept_client()
     
     while True:
-        data = client.recv_message(conn)
-        if data == 'PING':
-            client.send_resp(conn)
-        else:
-            client.send_resp(conn, 'Hello there!')
+        data = server.recv_message(conn)
+        server.send_resp(conn, data)
